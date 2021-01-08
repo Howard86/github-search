@@ -1,11 +1,15 @@
 import React, { FC } from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
+import { Provider as ReduxProvider } from 'react-redux';
 import type { AppProps } from 'next/app';
+import store from '@/redux/store';
 
 const App: FC<AppProps> = ({ Component, pageProps }) => (
-  <ChakraProvider>
-    <Component {...pageProps} />
-  </ChakraProvider>
+  <ReduxProvider store={store}>
+    <ChakraProvider>
+      <Component {...pageProps} />
+    </ChakraProvider>
+  </ReduxProvider>
 );
 
 export default App;
