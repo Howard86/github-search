@@ -1,26 +1,22 @@
 {
-  "name": "nextjs-template",
-  "version": "1.0.0",
-  "description": "Next.js template configured with TypeScript, ESLint, Prettier and git hooks",
+  "name": "conference-call",
+  "version": "0.0.1",
+  "description": "Arranging audio & video calls powered by Agora.io",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Howard86/nextjs-template"
+    "url": "https://github.com/Howard86/conference-call"
   },
   "author": "Howard Tai <howard@howardism.dev>",
   "license": "MIT",
   "keywords": [
-    "template",
     "next.js",
     "typescript",
-    "eslint",
-    "prettier",
-    "lint-staged",
-    "husky"
+    "agora"
   ],
   "bugs": {
-    "url": "https://github.com/Howard86/nextjs-template/issues"
+    "url": "https://github.com/Howard86/conference-call/issues"
   },
-  "homepage": "https://github.com/Howard86/nextjs-template",
+  "homepage": "https://github.com/Howard86/conference-call",
   "scripts": {
     "check": "npm run type-check && npm run lint && npm run format",
     "type-check": "tsc --noEmit",
@@ -29,7 +25,8 @@
     "test": "jest",
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "version": "conventional-changelog -p angular -i CHANGELOG.md -s && git add CHANGELOG.md"
   },
   "dependencies": {
     "@chakra-ui/react": "^1.1.2",
