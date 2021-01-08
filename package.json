@@ -24,6 +24,7 @@
     "format": "prettier --write \"src/**/*.(ts|tsx)\"",
     "test": "jest",
     "dev": "next dev",
+    "debug": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start",
     "version": "conventional-changelog -p angular -i CHANGELOG.md -s && git add CHANGELOG.md"
