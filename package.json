@@ -26,6 +26,7 @@
     "type-check": "tsc --noEmit",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "format": "prettier --write \"src/**/*.(ts|tsx)\"",
+    "test": "jest",
     "dev": "next dev",
     "build": "next build",
     "start": "next start"
