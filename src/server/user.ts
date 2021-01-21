@@ -73,6 +73,13 @@ export const searchUsersByUsername = async (
 export const getUserByUsername = async (
   username: string,
 ): Promise<SingleGitHubUser | null> => {
-  const response = await octokit.request('GET /users/{username}', { username });
-  return response.status === 200 ? response.data : null;
+  try {
+    const response = await octokit.request('GET /users/{username}', {
+      username,
+    });
+    return response.status === 200 ? response.data : null;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
 };
