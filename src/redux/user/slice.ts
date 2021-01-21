@@ -24,7 +24,7 @@ const { reducer } = createSlice({
     });
     builder.addCase(search.fulfilled, (state, action) => {
       state.isSearching = false;
-      state.users = action.payload;
+      state.users = action.payload.users;
     });
     builder.addCase(search.rejected, (state, action) => {
       state.isSearching = false;

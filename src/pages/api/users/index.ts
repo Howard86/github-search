@@ -8,13 +8,20 @@ export default async (
   switch (req.method) {
     case 'GET': {
       const username = req.query.username as string;
+      const page = req.query.page as string;
 
       if (!username) {
         return res.status(400).json({ success: false });
       }
 
-      const users = await searchUsersByUsername(username);
-      return res.status(200).json({ success: users.length > 0, users });
+      const { isEnd, total, users } = await searchUsersByUsername(
+        username,
+        parseInt(page, 10),
+      );
+
+      return res
+        .status(200)
+        .json({ success: users.length > 0, isEnd, total, users });
     }
 
     default:

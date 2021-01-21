@@ -1,5 +1,11 @@
 import { Octokit } from '@octokit/core';
 
+export interface SearchGitHubUser {
+  total: number;
+  isEnd: boolean;
+  users: GitHubUser[];
+}
+
 export interface GitHubUser {
   username: string;
   avatarUrl: string;
@@ -52,6 +58,8 @@ export interface SingleGitHubUser {
   };
 }
 
+const PER_PAGE = 15;
+
 const octokit = new Octokit({
   auth: process.env.GITHUB_ACCESS_TOKEN,
 });
@@ -63,11 +71,18 @@ const filterUnusedData = (raw: GitHubRawUser): GitHubUser => ({
 
 export const searchUsersByUsername = async (
   username: string,
-): Promise<GitHubUser[]> => {
+  page: number,
+): Promise<SearchGitHubUser> => {
   const response = await octokit.request('GET /search/users', {
-    q: `${username} in:name`,
+    q: `${username} in:login`,
+    per_page: PER_PAGE,
+    page,
   });
-  return response.data.items.map(filterUnusedData);
+  return {
+    total: response.data.total_count,
+    isEnd: page * PER_PAGE >= response.data.total_count,
+    users: response.data.items.map(filterUnusedData),
+  };
 };
 
 export const getUserByUsername = async (
