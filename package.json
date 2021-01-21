@@ -1,10 +1,10 @@
 {
-  "name": "conference-call",
+  "name": "github-search",
   "version": "0.1.0",
-  "description": "Arranging audio & video calls powered by Agora.io",
+  "description": "Implement another github search engine",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Howard86/conference-call"
+    "url": "https://github.com/Howard86/github-search"
   },
   "author": "Howard Tai <howard@howardism.dev>",
   "license": "MIT",
@@ -14,9 +14,9 @@
     "agora"
   ],
   "bugs": {
-    "url": "https://github.com/Howard86/conference-call/issues"
+    "url": "https://github.com/Howard86/github-search/issues"
   },
-  "homepage": "https://github.com/Howard86/conference-call",
+  "homepage": "https://github.com/Howard86/github-search",
   "scripts": {
     "check": "npm run type-check && npm run lint && npm run format",
     "type-check": "tsc --noEmit",
