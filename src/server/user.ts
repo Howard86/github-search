@@ -98,3 +98,30 @@ export const getUserByUsername = async (
     return null;
   }
 };
+
+export const getRepositoriesByUsername = async (
+  username: string,
+): Promise<string[]> => {
+  const response = await octokit.request('GET /users/{username}/repos', {
+    username,
+  });
+  return response.data.map((repo) => repo.name);
+};
+
+export const getFollowersByUsername = async (
+  username: string,
+): Promise<string[]> => {
+  const response = await octokit.request('GET /users/{username}/followers', {
+    username,
+  });
+  return response.data.map((repo) => repo.login);
+};
+
+export const getFollowingsByUsername = async (
+  username: string,
+): Promise<string[]> => {
+  const response = await octokit.request('GET /users/{username}/following', {
+    username,
+  });
+  return response.data.map((repo) => repo.login);
+};
