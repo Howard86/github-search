@@ -12,10 +12,12 @@ import {
 import { useAppDispatch } from '@/redux/store';
 import { search, selectUser } from '@/redux/user';
 import type { SearchUserResponse } from '@/redux/api';
+import Loader from './Loader';
 
 const DEFAULT_USERNAME = '';
 const DEFAULT_PAGE = 1;
 
+// TODO: should refactor this from index page again
 const SearchBar: FC = () => {
   const dispatch = useAppDispatch();
   const { isSearching } = useSelector(selectUser);
@@ -57,7 +59,6 @@ const SearchBar: FC = () => {
           Search
         </Button>
       </HStack>
-
       <HStack>
         <Button onClick={handleDecrement} isDisabled={page === 1}>
           -
@@ -67,6 +68,7 @@ const SearchBar: FC = () => {
           +
         </Button>
       </HStack>
+      {isSearching && <Loader />}
     </>
   );
 };
