@@ -1,9 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getUserByUsername } from '@/server/user';
+import type { GetUserResponse } from '@/redux/api';
 
 export default async (
   req: NextApiRequest,
-  res: NextApiResponse,
+  res: NextApiResponse<GetUserResponse>,
 ): Promise<void> => {
   const username = req.query.username as string;
 

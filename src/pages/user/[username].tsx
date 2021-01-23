@@ -11,8 +11,8 @@ import {
   Box,
 } from '@chakra-ui/react';
 import type { GetServerSideProps } from 'next';
+import type { DetailedGitHubUser } from '@/server/github';
 import {
-  SingleGitHubUser,
   getUserByUsername,
   getFollowersByUsername,
   getFollowingsByUsername,
@@ -20,7 +20,7 @@ import {
 } from '@/server/user';
 
 interface UserPageProps {
-  user: SingleGitHubUser;
+  user: DetailedGitHubUser;
   repositories: string[];
   followers: string[];
   followings: string[];

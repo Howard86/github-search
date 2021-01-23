@@ -1,9 +1,11 @@
 import React, { FC } from 'react';
 import NextLink from 'next/link';
 import { Avatar, Link, Text, WrapItem } from '@chakra-ui/react';
-import type { GitHubUser } from '@/server/user';
 
-type UserCardProps = GitHubUser;
+interface UserCardProps {
+  avatarUrl: string;
+  username: string;
+}
 
 const UserCard: FC<UserCardProps> = ({ avatarUrl, username }) => (
   <WrapItem m={[2, 4]}>

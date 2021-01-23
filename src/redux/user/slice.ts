@@ -1,10 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
-import type { GitHubUser } from '@/server/user';
+import type { UserProfile } from '@/server/user';
 import { search } from './action';
 
 export interface UserState {
   isSearching: boolean;
-  users: GitHubUser[];
+  users: UserProfile[];
   message?: string;
 }
 

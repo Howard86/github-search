@@ -1,98 +1,67 @@
-import { Octokit } from '@octokit/core';
+import {
+  searchUsers,
+  getUser,
+  DetailedGitHubUser,
+  getRepositories,
+  getFollowers,
+  getFollowing,
+  USER_PER_PAGE,
+} from './github';
 
-export interface SearchGitHubUser {
+export interface SearchUserPage {
   total: number;
+  isStart: boolean;
   isEnd: boolean;
-  users: GitHubUser[];
+  page: number;
+  totalPage: number;
+  users: UserProfile[];
 }
 
-export interface GitHubUser {
+export interface User {
+  user: DetailedGitHubUser;
+  followers: string[];
+  following: string[];
+  repositories: string[];
+}
+
+export interface UserProfile {
   username: string;
   avatarUrl: string;
+  followerCount: number;
+  followingCount: number;
 }
 
-// only needs the following field
-interface GitHubRawUser {
-  login: string;
-  avatar_url: string;
-}
-
-export interface SingleGitHubUser {
-  login: string;
-  id: number;
-  node_id: string;
-  avatar_url: string;
-  gravatar_id: string;
-  url: string;
-  html_url: string;
-  followers_url: string;
-  following_url: string;
-  gists_url: string;
-  starred_url: string;
-  subscriptions_url: string;
-  organizations_url: string;
-  repos_url: string;
-  events_url: string;
-  received_events_url: string;
-  type: string;
-  site_admin: boolean;
-  name: string;
-  company: string;
-  blog: string;
-  location: string;
-  email: string;
-  hireable: boolean;
-  bio: string;
-  twitter_username?: string;
-  public_repos: number;
-  public_gists: number;
-  followers: number;
-  following: number;
-  created_at: string;
-  updated_at: string;
-  plan?: {
-    name: string;
-    space: number;
-    collaborators: number;
-    private_repos: number;
-  };
-}
-
-const PER_PAGE = 15;
-
-const octokit = new Octokit({
-  auth: process.env.GITHUB_ACCESS_TOKEN,
-});
-
-const filterUnusedData = (raw: GitHubRawUser): GitHubUser => ({
+const userProfileDTO = (raw: DetailedGitHubUser): UserProfile => ({
   username: raw.login,
   avatarUrl: raw.avatar_url,
+  followerCount: raw.followers,
+  followingCount: raw.following,
 });
 
 export const searchUsersByUsername = async (
   username: string,
   page: number,
-): Promise<SearchGitHubUser> => {
-  const response = await octokit.request('GET /search/users', {
-    q: `${username} in:login`,
-    per_page: PER_PAGE,
-    page,
-  });
+): Promise<SearchUserPage> => {
+  const result = await searchUsers(username, page);
+
+  const total = result.total_count;
+
   return {
-    total: response.data.total_count,
-    isEnd: page * PER_PAGE >= response.data.total_count,
-    users: response.data.items.map(filterUnusedData),
+    total,
+    isStart: page === 1,
+    page,
+    totalPage: Math.floor(total / USER_PER_PAGE) + 1,
+    isEnd: page * USER_PER_PAGE >= total,
+    users: result.items.map(userProfileDTO),
   };
 };
 
 export const getUserByUsername = async (
   username: string,
-): Promise<SingleGitHubUser | null> => {
+): Promise<DetailedGitHubUser | null> => {
   try {
-    const response = await octokit.request('GET /users/{username}', {
-      username,
-    });
-    return response.status === 200 ? response.data : null;
+    const result = await getUser(username);
+    return result;
   } catch (error) {
     console.error(error);
     return null;
@@ -102,26 +71,20 @@ export const getUserByUsername = async (
 export const getRepositoriesByUsername = async (
   username: string,
 ): Promise<string[]> => {
-  const response = await octokit.request('GET /users/{username}/repos', {
-    username,
-  });
-  return response.data.map((repo) => repo.name);
+  const repositories = await getRepositories(username);
+  return repositories.map((repo) => repo.name);
 };
 
 export const getFollowersByUsername = async (
   username: string,
 ): Promise<string[]> => {
-  const response = await octokit.request('GET /users/{username}/followers', {
-    username,
-  });
-  return response.data.map((repo) => repo.login);
+  const result = await getFollowers(username);
+  return result.map((user) => user.login);
 };
 
 export const getFollowingsByUsername = async (
   username: string,
 ): Promise<string[]> => {
-  const response = await octokit.request('GET /users/{username}/following', {
-    username,
-  });
-  return response.data.map((repo) => repo.login);
+  const result = await getFollowing(username);
+  return result.map((user) => user.login);
 };
