@@ -104,8 +104,8 @@ const octokit = new EnhancedOctokit({
       );
     },
   },
-  retry: {
-    doNotRetry: ['429'],
+  request: {
+    retries: 1,
   },
 });
 
