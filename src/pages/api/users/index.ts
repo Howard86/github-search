@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { searchUsersByUsername } from '@/server/user';
+import { searchUsersByUsername } from '@/server/search-user';
 import type { SearchUserResponse } from '@/redux/api';
 
 export default async (
@@ -15,11 +15,18 @@ export default async (
         return res.status(400).json({ success: false });
       }
 
-      const result = await searchUsersByUsername(username, parseInt(page, 10));
-
-      return res
-        .status(200)
-        .json({ success: result.users.length > 0, ...result });
+      try {
+        const result = await searchUsersByUsername(
+          username,
+          parseInt(page, 10),
+        );
+        return res
+          .status(200)
+          .json({ success: result.users.length > 0, ...result });
+      } catch (error) {
+        console.error(error);
+        return res.status(400).json({ success: false });
+      }
     }
 
     default:

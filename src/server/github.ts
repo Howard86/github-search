@@ -5,7 +5,7 @@ import { throttling } from '@octokit/plugin-throttling';
 export interface SearchGitHubUser {
   total_count: number;
   incomplete_results: boolean;
-  items: DetailedGitHubUser[];
+  items: GitHubUser[];
 }
 
 export interface GitHubUser {

@@ -1,11 +1,11 @@
-import type { DetailedGitHubUser } from '@/server/github';
-import type { SearchUserPage } from '@/server/user';
+import type { SearchUserPage } from '@/server/search-user';
+import type { User } from '@/server/user';
 
 export interface SearchUserResponse
   extends LocalAPIResponse,
     Partial<SearchUserPage> {}
 export interface GetUserResponse extends LocalAPIResponse {
-  user?: DetailedGitHubUser;
+  user?: User;
 }
 
 interface LocalAPIResponse {

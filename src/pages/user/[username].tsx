@@ -11,30 +11,19 @@ import {
   Box,
 } from '@chakra-ui/react';
 import type { GetServerSideProps } from 'next';
-import type { DetailedGitHubUser } from '@/server/github';
-import {
-  getUserByUsername,
-  getFollowersByUsername,
-  getFollowingsByUsername,
-  getRepositoriesByUsername,
-} from '@/server/user';
+import { getUserByUsername, User } from '@/server/user';
 
-interface UserPageProps {
-  user: DetailedGitHubUser;
-  repositories: string[];
-  followers: string[];
-  followings: string[];
-}
+type UserPageProps = User;
 
 const UserPage: FC<UserPageProps> = ({
-  user,
+  info,
   repositories,
   followers,
   followings,
 }) => {
   const { isOpen, onToggle } = useDisclosure();
 
-  if (!user) {
+  if (!info) {
     return (
       <Container as="main" p={[4, 8, 12]} minH="80vh" centerContent>
         <Text>Not Found</Text>
@@ -45,7 +34,7 @@ const UserPage: FC<UserPageProps> = ({
   const renderName = (name: string) => <Text key={name}>{name}</Text>;
 
   // FIXME: 'plan' exists when accessing tokens' owner, should remove in server
-  const { plan, ...rest } = user;
+  const { plan, ...rest } = info;
 
   return (
     <Container as="main" p={[4, 8, 12]} minH="80vh" centerContent>
@@ -68,7 +57,7 @@ const UserPage: FC<UserPageProps> = ({
             {Object.keys(rest).map((key) => (
               <HStack key={key} alignItems="start">
                 <Text fontWeight="bold">{key}</Text>
-                <Text>{user[key]}</Text>
+                <Text>{info[key]}</Text>
               </HStack>
             ))}
           </VStack>
@@ -80,20 +69,14 @@ const UserPage: FC<UserPageProps> = ({
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const username = context.params.username as string;
-  const user = await getUserByUsername(username);
-  let repositories: string[];
-  let followers: string[];
-  let followings: string[];
 
-  if (user !== null) {
-    [repositories, followers, followings] = await Promise.all([
-      getRepositoriesByUsername(username),
-      getFollowersByUsername(username),
-      getFollowingsByUsername(username),
-    ]);
+  try {
+    const user = await getUserByUsername(username);
+    return { props: user };
+  } catch (error) {
+    console.error(error);
+    return { props: { user: null } };
   }
-
-  return { props: { user, repositories, followers, followings } };
 };
 
 export default UserPage;

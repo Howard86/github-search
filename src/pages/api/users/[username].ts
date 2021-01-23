@@ -10,11 +10,13 @@ export default async (
 
   switch (req.method) {
     case 'GET': {
-      const user = await getUserByUsername(username);
-      if (!user) {
+      try {
+        const user = await getUserByUsername(username);
+        return res.status(200).json({ success: true, user });
+      } catch (error) {
+        console.error(error);
         return res.status(404).json({ success: false });
       }
-      return res.status(200).json({ success: true, user });
     }
 
     default:

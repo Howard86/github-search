@@ -1,90 +1,86 @@
+import LRU from 'lru-cache';
+import { TEN_MINUTES } from './search-user';
 import {
-  searchUsers,
-  getUser,
+  GitHubUser,
   DetailedGitHubUser,
+  getUser,
   getRepositories,
   getFollowers,
   getFollowing,
-  USER_PER_PAGE,
 } from './github';
 
-export interface SearchUserPage {
-  total: number;
-  isStart: boolean;
-  isEnd: boolean;
-  page: number;
-  totalPage: number;
-  users: UserProfile[];
+export interface User extends UserFollow {
+  info: DetailedGitHubUser;
+  repositories: string[];
 }
 
-export interface User {
-  user: DetailedGitHubUser;
+export interface UserFollow {
   followers: string[];
-  following: string[];
-  repositories: string[];
+  followings: string[];
 }
 
 export interface UserProfile {
   username: string;
   avatarUrl: string;
-  followerCount: number;
-  followingCount: number;
 }
 
-const userProfileDTO = (raw: DetailedGitHubUser): UserProfile => ({
-  username: raw.login,
-  avatarUrl: raw.avatar_url,
-  followerCount: raw.followers,
-  followingCount: raw.following,
+const MAX_CACHED_USERS = 100;
+
+const cachedUser = new LRU<string, User>({
+  max: MAX_CACHED_USERS,
+  maxAge: TEN_MINUTES,
 });
 
-export const searchUsersByUsername = async (
+const cachedUserFollow = new LRU<string, UserFollow>({
+  max: MAX_CACHED_USERS,
+  maxAge: TEN_MINUTES,
+});
+
+const mapFollow = (user: GitHubUser): string => user.login;
+
+export const getUserFollowersAndFollowing = async (
   username: string,
-  page: number,
-): Promise<SearchUserPage> => {
-  const result = await searchUsers(username, page);
+): Promise<UserFollow> => {
+  const cache = cachedUserFollow.get(username);
 
-  const total = result.total_count;
-
-  return {
-    total,
-    isStart: page === 1,
-    page,
-    totalPage: Math.floor(total / USER_PER_PAGE) + 1,
-    isEnd: page * USER_PER_PAGE >= total,
-    users: result.items.map(userProfileDTO),
-  };
-};
-
-export const getUserByUsername = async (
-  username: string,
-): Promise<DetailedGitHubUser | null> => {
-  try {
-    const result = await getUser(username);
-    return result;
-  } catch (error) {
-    console.error(error);
-    return null;
+  if (cache) {
+    return cache;
   }
+
+  const [rawFollowers, rawFollowing] = await Promise.all([
+    getFollowers(username),
+    getFollowing(username),
+  ]);
+  const userFollow = {
+    followers: rawFollowers.map(mapFollow),
+    followings: rawFollowing.map(mapFollow),
+  };
+
+  cachedUserFollow.set(username, userFollow);
+  return userFollow;
 };
 
-export const getRepositoriesByUsername = async (
-  username: string,
-): Promise<string[]> => {
-  const repositories = await getRepositories(username);
-  return repositories.map((repo) => repo.name);
-};
+export const getUserByUsername = async (username: string): Promise<User> => {
+  const cache = cachedUser.get(username);
 
-export const getFollowersByUsername = async (
-  username: string,
-): Promise<string[]> => {
-  const result = await getFollowers(username);
-  return result.map((user) => user.login);
-};
+  if (cache) {
+    return cache;
+  }
 
-export const getFollowingsByUsername = async (
-  username: string,
-): Promise<string[]> => {
-  const result = await getFollowing(username);
-  return result.map((user) => user.login);
+  const [info, { followers, followings }, repositories] = await Promise.all([
+    getUser(username),
+    getUserFollowersAndFollowing(username),
+    getRepositories(username),
+  ]);
+
+  const user = {
+    info,
+    followers,
+    followings,
+    repositories: repositories.map((repository) => repository.name),
+  };
+
+  cachedUser.set(username, user);
+
+  return user;
 };
