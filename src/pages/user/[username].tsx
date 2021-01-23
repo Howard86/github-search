@@ -10,10 +10,14 @@ import {
   Heading,
   Box,
 } from '@chakra-ui/react';
-import type { GetServerSideProps } from 'next';
+import type { GetStaticPaths, GetStaticProps } from 'next';
 import { getUserByUsername, User } from '@/server/user';
 
 type UserPageProps = User;
+
+const FIVE_MINUTES = 5 * 60;
+
+const renderName = (name: string) => <Text key={name}>{name}</Text>;
 
 const UserPage: FC<UserPageProps> = ({
   info,
@@ -22,16 +26,6 @@ const UserPage: FC<UserPageProps> = ({
   followings,
 }) => {
   const { isOpen, onToggle } = useDisclosure();
-
-  if (!info) {
-    return (
-      <Container as="main" p={[4, 8, 12]} minH="80vh" centerContent>
-        <Text>Not Found</Text>
-      </Container>
-    );
-  }
-
-  const renderName = (name: string) => <Text key={name}>{name}</Text>;
 
   // FIXME: 'plan' exists when accessing tokens' owner, should remove in server
   const { plan, ...rest } = info;
@@ -67,15 +61,21 @@ const UserPage: FC<UserPageProps> = ({
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getStaticPaths: GetStaticPaths = async () => ({
+  paths: [],
+  // blocking will server-render new page and cache
+  fallback: 'blocking',
+});
+
+export const getStaticProps: GetStaticProps = async (context) => {
   const username = context.params.username as string;
 
   try {
     const user = await getUserByUsername(username);
-    return { props: user };
+    return { props: user, revalidate: FIVE_MINUTES };
   } catch (error) {
     console.error(error);
-    return { props: { user: null } };
+    return { notFound: true };
   }
 };
 
