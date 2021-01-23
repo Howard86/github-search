@@ -3,7 +3,6 @@ import type { NextPage } from 'next';
 import {
   VStack,
   Text,
-  Container,
   HStack,
   Button,
   Collapse,
@@ -32,33 +31,31 @@ const UserPage: NextPage<UserPageProps> = ({
   const { plan, ...rest } = info;
 
   return (
-    <Container as="main" p={[4, 8, 12]} minH="80vh" centerContent>
-      <VStack spacing={4}>
-        <Box>
-          <Heading>Repositories</Heading>
-          {repositories.map(renderName)}
-        </Box>
-        <Box>
-          <Heading>Followers</Heading>
-          {followers.map(renderName)}
-        </Box>
-        <Box>
-          <Heading>Followings</Heading>
-          {followings.map(renderName)}
-        </Box>
-        <Button onClick={onToggle}>Show API response</Button>
-        <Collapse in={isOpen} animateOpacity>
-          <VStack spacing={2}>
-            {Object.keys(rest).map((key) => (
-              <HStack key={key} alignItems="start">
-                <Text fontWeight="bold">{key}</Text>
-                <Text>{info[key]}</Text>
-              </HStack>
-            ))}
-          </VStack>
-        </Collapse>
-      </VStack>
-    </Container>
+    <VStack spacing={4}>
+      <Box>
+        <Heading>Repositories</Heading>
+        {repositories.map(renderName)}
+      </Box>
+      <Box>
+        <Heading>Followers</Heading>
+        {followers.map(renderName)}
+      </Box>
+      <Box>
+        <Heading>Followings</Heading>
+        {followings.map(renderName)}
+      </Box>
+      <Button onClick={onToggle}>Show API response</Button>
+      <Collapse in={isOpen} animateOpacity>
+        <VStack spacing={2}>
+          {Object.keys(rest).map((key) => (
+            <HStack key={key} alignItems="start">
+              <Text fontWeight="bold">{key}</Text>
+              <Text>{info[key]}</Text>
+            </HStack>
+          ))}
+        </VStack>
+      </Collapse>
+    </VStack>
   );
 };
 
