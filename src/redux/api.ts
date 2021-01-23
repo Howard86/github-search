@@ -8,6 +8,11 @@ export interface GetUserResponse extends LocalAPIResponse {
   user?: User;
 }
 
+export interface GetUserFollowCount extends LocalAPIResponse {
+  followerCount?: number;
+  followingCount?: number;
+}
+
 interface LocalAPIResponse {
   success: boolean;
 }
