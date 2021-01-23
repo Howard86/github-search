@@ -5,10 +5,11 @@ import { ChakraProvider } from '@chakra-ui/react';
 import { Provider as ReduxProvider } from 'react-redux';
 import store from '@/redux/store';
 import Layout from '@/components/Layout';
+import theme from '@/styles/theme';
 
 const App: NextPage<AppProps> = ({ Component, pageProps }) => (
   <ReduxProvider store={store}>
-    <ChakraProvider>
+    <ChakraProvider theme={theme}>
       <Layout>
         <Component {...pageProps} />
       </Layout>
