@@ -31,4 +31,4 @@ const UserFollowLabel: FC<UserFollowLabelProps> = ({ username }) => {
   );
 };
 
-export default UserFollowLabel;
+export default React.memo(UserFollowLabel);

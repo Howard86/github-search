@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 import NextLink from 'next/link';
 import { Avatar, Link, Text, VStack, WrapItem } from '@chakra-ui/react';
 import UserFollowLabel from './UserFollowLabel';
@@ -24,4 +24,4 @@ const UserCard: FC<UserCardProps> = ({ avatarUrl, username }) => (
   </WrapItem>
 );
 
-export default UserCard;
+export default memo(UserCard);
