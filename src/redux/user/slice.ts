@@ -28,7 +28,7 @@ const { reducer } = createSlice({
     });
     builder.addCase(search.rejected, (state, action) => {
       state.isSearching = false;
-      state.message = `Cannot find ${action.meta.arg}, try another one?`;
+      state.message = `Cannot find ${action.meta.arg.username}, try another one?`;
     });
   },
 });
