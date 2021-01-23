@@ -1,11 +1,12 @@
-import React, { FC } from 'react';
+import React from 'react';
+import type { NextPage } from 'next';
 import { useSelector } from 'react-redux';
 import { Container, VStack, Wrap, Text } from '@chakra-ui/react';
 import { selectUser } from '@/redux/user';
 import SearchBar from '@/components/SearchBar';
 import UserCard from '@/components/UserCard';
 
-const Home: FC = () => {
+const Home: NextPage = () => {
   const { users, message } = useSelector(selectUser);
 
   return (

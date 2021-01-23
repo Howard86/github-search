@@ -1,4 +1,5 @@
-import React, { FC } from 'react';
+import React from 'react';
+import type { NextPage } from 'next';
 import {
   VStack,
   Text,
@@ -19,7 +20,7 @@ const FIVE_MINUTES = 5 * 60;
 
 const renderName = (name: string) => <Text key={name}>{name}</Text>;
 
-const UserPage: FC<UserPageProps> = ({
+const UserPage: NextPage<UserPageProps> = ({
   info,
   repositories,
   followers,
