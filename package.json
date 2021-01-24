@@ -70,5 +70,8 @@
     "lint-staged": "^10.5.1",
     "prettier": "^2.1.2",
     "typescript": "^4.0.5"
-  }
+  },
+  "browserslist": [
+    "last 1 version, > 1%, ie 10, and_chr 30"
+  ]
 }
