@@ -1,3 +1,24 @@
+# [0.3.0](https://github.com/Howard86/github-search/compare/v0.2.0...v0.3.0) (2021-01-24)
+
+
+### Bug Fixes
+
+* github retry override ([09def48](https://github.com/Howard86/github-search/commit/09def48ef811bba633a279eecd1c9abe92eaa301))
+* incorrect error message on SearchBar ([bf57b4e](https://github.com/Howard86/github-search/commit/bf57b4e6a86cfd47718b4aefa509fa46694fb539))
+
+
+### Features
+
+* add GET follow/[username] API ([8565a8c](https://github.com/Howard86/github-search/commit/8565a8c4b754a8bff82b6f4ac0c7a3111d07eb1e))
+* add user page dynamic generate and cache ([509fa41](https://github.com/Howard86/github-search/commit/509fa4112124a4cfd3eb45bd6c37142f8068f711))
+* add UserFollowLabel in UserCard ([327f532](https://github.com/Howard86/github-search/commit/327f53258af664159befc29a719010fdde372a14))
+* add useUserFollow hook to async fetch follow data ([dd08167](https://github.com/Howard86/github-search/commit/dd08167e129896f8d13c0df72174340ee2fc2816))
+* improve performace with debounce and memo ([185305f](https://github.com/Howard86/github-search/commit/185305f6eba6d3b2415ac654ee4ce1412c0a68a1))
+* refactor github service with updated types ([33f0eb4](https://github.com/Howard86/github-search/commit/33f0eb4f632e09b04891b561cc4603015f29576d))
+* refactor user service and add cache ([4362344](https://github.com/Howard86/github-search/commit/4362344c723d38862a4cfb9d2a6142288c03bd9a))
+
+
+
 # [0.2.0](https://github.com/Howard86/github-search/compare/v0.1.0...v0.2.0) (2021-01-22)
 
 

@@ -1,4 +1,10 @@
-import React, { ChangeEvent, FC, useState } from 'react';
+import React, {
+  ChangeEvent,
+  FC,
+  useState,
+  useEffect,
+  useCallback,
+} from 'react';
 import { useSelector } from 'react-redux';
 import { SearchIcon } from '@chakra-ui/icons';
 import {
@@ -9,6 +15,7 @@ import {
   HStack,
   Text,
 } from '@chakra-ui/react';
+import debounce from 'lodash.debounce';
 import { useAppDispatch } from '@/redux/store';
 import { search, selectUser } from '@/redux/user';
 import type { SearchUserResponse } from '@/redux/api';
@@ -29,18 +36,38 @@ const SearchBar: FC = () => {
   const handleOnChange = (event: ChangeEvent<HTMLInputElement>): void =>
     setUsername(event.target.value);
 
-  const handleOnClick = async (pageNumber: number): Promise<void> => {
-    setIsEnd(true);
-    setPage(pageNumber);
-    const action = await dispatch(search({ username, page: pageNumber }));
-    setIsEnd((action.payload as SearchUserResponse).isEnd);
-  };
+  const handleOnClick = useCallback(
+    async (name: string, pageNumber: number): Promise<void> => {
+      setIsEnd(true);
+      setPage(pageNumber);
+      const action = await dispatch(
+        search({ username: name, page: pageNumber }),
+      );
+      if (action.payload) {
+        setIsEnd((action.payload as SearchUserResponse).isEnd);
+      }
+    },
+    [],
+  );
 
-  const handleOnSearch = () => handleOnClick(DEFAULT_PAGE);
+  const handleOnSearch = useCallback(
+    debounce((name) => {
+      handleOnClick(name, DEFAULT_PAGE);
+    }, 300),
+    [],
+  );
 
-  const handleIncrement = () => handleOnClick(page + 1);
+  const handleOnSearchClick = () => handleOnSearch(username);
 
-  const handleDecrement = () => handleOnClick(page - 1);
+  const handleIncrement = () => handleOnClick(username, page + 1);
+
+  const handleDecrement = () => handleOnClick(username, page - 1);
+
+  useEffect(() => {
+    if (username !== '') {
+      handleOnSearch(username);
+    }
+  }, [username]);
 
   return (
     <>
@@ -55,7 +82,7 @@ const SearchBar: FC = () => {
             onChange={handleOnChange}
           />
         </InputGroup>
-        <Button onClick={handleOnSearch} isLoading={isSearching}>
+        <Button onClick={handleOnSearchClick} isLoading={isSearching}>
           Search
         </Button>
       </HStack>

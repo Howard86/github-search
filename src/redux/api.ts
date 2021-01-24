@@ -1,12 +1,20 @@
-import type { SingleGitHubUser, GitHubUser } from '@/server/user';
+import type { SearchUserPage } from '@/server/search-user';
+import type { User } from '@/server/user';
 
-export interface SearchUserResponse extends LocalAPIResponse {
-  isEnd: boolean;
-  total: number;
-  users: GitHubUser[];
-}
+export interface SearchUserResponse
+  extends LocalAPIResponse,
+    Partial<SearchUserPage> {}
 export interface GetUserResponse extends LocalAPIResponse {
-  user: SingleGitHubUser;
+  user?: User;
+}
+
+export interface GetUserFollowCount
+  extends LocalAPIResponse,
+    Partial<UserFollowCount> {}
+
+export interface UserFollowCount {
+  followerCount: number;
+  followingCount: number;
 }
 
 interface LocalAPIResponse {
