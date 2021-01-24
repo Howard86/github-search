@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getUserFollowersAndFollowing } from '@/server/user';
+import { getUserByUsername } from '@/server/user';
 import { GetUserFollowCount } from '@/redux/api';
 
 export default async (
@@ -11,11 +11,12 @@ export default async (
   switch (req.method) {
     case 'GET': {
       try {
-        const userFollow = await getUserFollowersAndFollowing(username);
+        // TODO: Fix github list repos, followers, following with pagination
+        const user = await getUserByUsername(username);
         return res.status(200).json({
           success: true,
-          followerCount: userFollow.followers.length,
-          followingCount: userFollow.followings.length,
+          followerCount: user.info.followers,
+          followingCount: user.info.following,
         });
       } catch (error) {
         console.error(error);
