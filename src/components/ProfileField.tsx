@@ -15,16 +15,17 @@ const ProfileField: FC<ProfileFieldProps> = ({ fieldKey, fieldValue }) => {
 
   return (
     <Flex fontSize={['md', 'lg']} my={[1, 2]}>
-      <Text as="h3" fontWeight="medium" w="44">
+      <Text as="h3" fontWeight="medium" w="36" textTransform="capitalize">
         <Icon mr="1" fontSize="lg" as={matchIcon(fieldKey)} />
-        {fieldKey}
+        {/* TODO: fix this quick workaround */}
+        {fieldKey.replace('Count', '').replace('Username', '')}
       </Text>
       <Tooltip
         label={fieldValue}
         aria-label={fieldKey + "'s tooltip"}
         placement="bottom-start"
       >
-        <Text isTruncated w="calc(100% - 10rem)">
+        <Text isTruncated w="calc(100% - 8rem)">
           {fieldValue}
         </Text>
       </Tooltip>

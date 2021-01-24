@@ -1,9 +1,10 @@
 import React, { FC } from 'react';
-import { Container, Flex, Link } from '@chakra-ui/react';
-import { motion, Variants } from 'framer-motion';
-import { useRouter } from 'next/router';
-import ColorModeSwitch from './ColorModeSwitch';
 import NextLink from 'next/link';
+import { useRouter } from 'next/router';
+import { motion, Variants } from 'framer-motion';
+import { FaHome } from 'react-icons/fa';
+import { Container, Flex, Icon, Link } from '@chakra-ui/react';
+import ColorModeSwitch from './ColorModeSwitch';
 
 const variants: Variants = {
   pageInitial: {
@@ -32,7 +33,7 @@ const Layout: FC = ({ children }) => {
       <Flex mb={[2, 4]} w="full" justify="space-between">
         <NextLink href="/" passHref>
           <Link fontSize="lg" fontWeight="bold">
-            Home
+            <Icon color="blue.500" fontSize="36px" as={FaHome} /> Home
           </Link>
         </NextLink>
         <ColorModeSwitch />

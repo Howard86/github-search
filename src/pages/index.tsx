@@ -91,6 +91,9 @@ const Home: NextPage = () => {
           </InputLeftElement>
           <Input
             placeholder="GitHub username"
+            type="text"
+            name="search"
+            aria-label="GitHub Search"
             value={username}
             onChange={handleOnChange}
           />

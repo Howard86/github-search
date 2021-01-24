@@ -1,12 +1,5 @@
 import React, { FC, useState } from 'react';
-import {
-  VStack,
-  Avatar,
-  Box,
-  Heading,
-  Collapse,
-  Button,
-} from '@chakra-ui/react';
+import { VStack, Box, Heading, Collapse, Button, Img } from '@chakra-ui/react';
 import ProfileField from './ProfileField';
 
 export interface ProfileProps {
@@ -72,8 +65,15 @@ const Profile: FC<ProfileProps> = (props) => {
 
   return (
     <VStack w={['90vw', 'md']}>
-      <Avatar w="44" minH="44" h="auto" src={avatarUrl} name={name} />
-      <Heading as="h2" fontWeight="medium">
+      <Img
+        borderRadius="full"
+        boxSize="200"
+        htmlHeight="200"
+        htmlWidth="200"
+        src={avatarUrl}
+        alt={name}
+      />
+      <Heading as="h1" fontWeight="medium">
         {name}
       </Heading>
 

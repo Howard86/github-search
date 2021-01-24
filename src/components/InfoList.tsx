@@ -11,7 +11,7 @@ interface InfoList {
 
 const InfoList: FC<InfoList> = ({ name, icon, url }) => (
   <ListItem>
-    <ListIcon as={icon} />
+    <ListIcon fontSize="lg" as={icon} />
     {url ? (
       <Link href={url} isExternal>
         {name}
