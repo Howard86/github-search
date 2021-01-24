@@ -1,5 +1,6 @@
 import React, { ChangeEvent, useState, useEffect, useCallback } from 'react';
 import type { NextPage } from 'next';
+import Image from 'next/image';
 import { useSelector } from 'react-redux';
 import { SearchIcon } from '@chakra-ui/icons';
 import {
@@ -76,6 +77,12 @@ const Home: NextPage = () => {
 
   return (
     <VStack my="auto" spacing={[2, 4]}>
+      <Image
+        src="/profile.jpg"
+        alt="home page image"
+        height={200}
+        width={300}
+      />
       <Heading as="h1">GitHub Search</Heading>
       <Stack direction={['column', 'row']} align="center">
         <InputGroup>

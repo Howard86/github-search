@@ -10,9 +10,11 @@ import {
   Flex,
   Spacer,
 } from '@chakra-ui/react';
+import { NextSeo } from 'next-seo';
 import { RiGitRepositoryLine } from 'react-icons/ri';
 import { BsFillPersonCheckFill, BsFillPersonPlusFill } from 'react-icons/bs';
 import { getUserByUsername, User } from '@/server/user';
+import { DEFAULT_OPEN_GRAPH } from '@/constants/seo';
 import Profile from '@/components/Profile';
 import InfoList from '@/components/InfoList';
 
@@ -27,67 +29,83 @@ const UserPage: NextPage<UserPageProps> = ({
   followers,
   followings,
 }) => (
-  <Flex direction={['column', 'row']}>
-    <Profile
-      avatarUrl={info.avatar_url}
-      username={info.login}
-      name={info.name}
-      bio={info.bio}
-      email={info.email}
-      location={info.location}
-      company={info.company}
-      blog={info.blog}
-      twitterUsername={info.twitter_username}
-      siteAdmin={info.site_admin}
-      hireable={info.hireable}
-      id={info.id}
-      gravatarId={info.gravatar_id}
-      nodeId={info.node_id}
-      type={info.type}
-      repositoryCount={info.public_repos}
-      gistCount={info.public_gists}
-      followerCount={info.followers}
-      followingCount={info.following}
-      createdAt={info.created_at}
-      updatedAt={info.updated_at}
+  <>
+    <NextSeo
+      title={info.name}
+      openGraph={{
+        ...DEFAULT_OPEN_GRAPH,
+        images: [
+          {
+            url: info.avatar_url,
+            alt: `${info.name}'s profile picture`,
+            width: 400,
+            height: 400,
+          },
+        ],
+      }}
     />
-    <Spacer mx={[0, 2]} my={[4, 0]} />
-    <Tabs variant="enclosed" isFitted>
-      <TabList>
-        <Tab>Repository</Tab>
-        <Tab>Follower</Tab>
-        <Tab>Following</Tab>
-      </TabList>
-      <TabPanels>
-        <TabPanel>
-          <List>
-            {repositories.map((name) => (
-              <InfoList
-                key={name}
-                name={name}
-                url={`${GITHUB_BASE_URL}/${info.login}/${name}`}
-                icon={RiGitRepositoryLine}
-              />
-            ))}
-          </List>
-        </TabPanel>
-        <TabPanel>
-          <List>
-            {followers.map((name) => (
-              <InfoList key={name} name={name} icon={BsFillPersonPlusFill} />
-            ))}
-          </List>
-        </TabPanel>
-        <TabPanel>
-          <List>
-            {followings.map((name) => (
-              <InfoList key={name} name={name} icon={BsFillPersonCheckFill} />
-            ))}
-          </List>
-        </TabPanel>
-      </TabPanels>
-    </Tabs>
-  </Flex>
+    <Flex direction={['column', 'row']} align={['center', 'start']}>
+      <Profile
+        avatarUrl={info.avatar_url}
+        username={info.login}
+        name={info.name}
+        bio={info.bio}
+        email={info.email}
+        location={info.location}
+        company={info.company}
+        blog={info.blog}
+        twitterUsername={info.twitter_username}
+        siteAdmin={info.site_admin}
+        hireable={info.hireable}
+        id={info.id}
+        gravatarId={info.gravatar_id}
+        nodeId={info.node_id}
+        type={info.type}
+        repositoryCount={info.public_repos}
+        gistCount={info.public_gists}
+        followerCount={info.followers}
+        followingCount={info.following}
+        createdAt={info.created_at}
+        updatedAt={info.updated_at}
+      />
+      <Spacer mx={[0, 2]} my={[4, 0]} />
+      <Tabs variant="enclosed" isFitted>
+        <TabList>
+          <Tab>Repository</Tab>
+          <Tab>Follower</Tab>
+          <Tab>Following</Tab>
+        </TabList>
+        <TabPanels>
+          <TabPanel>
+            <List>
+              {repositories.map((name) => (
+                <InfoList
+                  key={name}
+                  name={name}
+                  url={`${GITHUB_BASE_URL}/${info.login}/${name}`}
+                  icon={RiGitRepositoryLine}
+                />
+              ))}
+            </List>
+          </TabPanel>
+          <TabPanel>
+            <List>
+              {followers.map((name) => (
+                <InfoList key={name} name={name} icon={BsFillPersonPlusFill} />
+              ))}
+            </List>
+          </TabPanel>
+          <TabPanel>
+            <List>
+              {followings.map((name) => (
+                <InfoList key={name} name={name} icon={BsFillPersonCheckFill} />
+              ))}
+            </List>
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
+    </Flex>
+  </>
 );
 
 export const getStaticPaths: GetStaticPaths = async () => ({
