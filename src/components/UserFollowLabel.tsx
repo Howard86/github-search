@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import useUserFollow from '@/hooks/useUserFollow';
-import { Stack, Tag, Text } from '@chakra-ui/react';
+import { HStack, Tag, TagLabel, TagLeftIcon, Tooltip } from '@chakra-ui/react';
+import { BsFillPersonCheckFill, BsFillPersonPlusFill } from 'react-icons/bs';
 
 interface UserFollowLabelProps {
   username: string;
@@ -9,25 +10,21 @@ interface UserFollowLabelProps {
 const UserFollowLabel: FC<UserFollowLabelProps> = ({ username }) => {
   const { isLoading, data } = useUserFollow(username);
 
-  if (isLoading) {
-    return null;
-  }
-
   return (
-    <Stack direction={['column', 'row']} spacing={['1', '2']}>
-      <Tag colorScheme="blue">
-        Followers
-        <Text ml="1" as="span" fontWeight="bold">
-          {data.followerCount}
-        </Text>
-      </Tag>
-      <Tag colorScheme="purple">
-        Following
-        <Text ml="1" as="span" fontWeight="bold">
-          {data.followingCount}
-        </Text>
-      </Tag>
-    </Stack>
+    <HStack spacing={[1, 2]}>
+      <Tooltip label="followers" aria-label="followers' tooltip">
+        <Tag colorScheme="blue">
+          <TagLeftIcon as={BsFillPersonPlusFill} />
+          <TagLabel>{isLoading ? '...' : data.followerCount}</TagLabel>
+        </Tag>
+      </Tooltip>
+      <Tooltip label="followings" aria-label="followings' tooltip">
+        <Tag colorScheme="purple">
+          <TagLeftIcon as={BsFillPersonCheckFill} />
+          <TagLabel>{isLoading ? '...' : data.followingCount}</TagLabel>
+        </Tag>
+      </Tooltip>
+    </HStack>
   );
 };
 
