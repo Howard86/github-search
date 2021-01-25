@@ -69,15 +69,15 @@ const UserPage: NextPage<UserPageProps> = ({
         updatedAt={info.updated_at}
       />
       <Spacer mx={[0, 2]} my={[4, 0]} />
-      <Tabs variant="enclosed" isFitted>
+      <Tabs minW={['sm', 'sm', 'md']} w="full" variant="enclosed" isFitted>
         <TabList>
           <Tab>Repository</Tab>
           <Tab>Follower</Tab>
           <Tab>Following</Tab>
         </TabList>
-        <TabPanels>
+        <TabPanels maxH="80vh" overflowY="auto">
           <TabPanel>
-            <List>
+            <List spacing={2}>
               {repositories.map((name) => (
                 <InfoList
                   key={name}
@@ -89,14 +89,14 @@ const UserPage: NextPage<UserPageProps> = ({
             </List>
           </TabPanel>
           <TabPanel>
-            <List>
+            <List spacing={2}>
               {followers.map((name) => (
                 <InfoList key={name} name={name} icon={BsFillPersonPlusFill} />
               ))}
             </List>
           </TabPanel>
           <TabPanel>
-            <List>
+            <List spacing={2}>
               {followings.map((name) => (
                 <InfoList key={name} name={name} icon={BsFillPersonCheckFill} />
               ))}

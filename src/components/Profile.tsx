@@ -64,7 +64,7 @@ const Profile: FC<ProfileProps> = (props) => {
   } = props;
 
   return (
-    <VStack w={['90vw', 'md']}>
+    <VStack w={['90vw', '24rem']}>
       <Img
         borderRadius="full"
         boxSize="200"

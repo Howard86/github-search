@@ -15,7 +15,7 @@ const ProfileField: FC<ProfileFieldProps> = ({ fieldKey, fieldValue }) => {
 
   return (
     <Flex fontSize={['md', 'lg']} my={[1, 2]}>
-      <Text as="h3" fontWeight="medium" w="36" textTransform="capitalize">
+      <Text as="h2" fontWeight="medium" w="36" textTransform="capitalize">
         <Icon mr="1" fontSize="lg" as={matchIcon(fieldKey)} />
         {/* TODO: fix this quick workaround */}
         {fieldKey.replace('Count', '').replace('Username', '')}

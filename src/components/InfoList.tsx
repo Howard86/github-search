@@ -10,8 +10,8 @@ interface InfoList {
 }
 
 const InfoList: FC<InfoList> = ({ name, icon, url }) => (
-  <ListItem>
-    <ListIcon fontSize="lg" as={icon} />
+  <ListItem fontSize={['md', 'lg']}>
+    <ListIcon fontSize="xl" as={icon} />
     {url ? (
       <Link href={url} isExternal>
         {name}
