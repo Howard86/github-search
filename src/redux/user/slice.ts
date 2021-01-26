@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import type { UserProfile } from '@/server/search-user';
+import type { UserProfile } from '@/server/service/search-user';
 import { search } from './action';
 
 export interface UserState {

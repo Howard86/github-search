@@ -16,7 +16,7 @@ import { NextSeo } from 'next-seo';
 import type { OpenGraph } from 'next-seo/lib/types';
 import { RiGitRepositoryLine } from 'react-icons/ri';
 import { BsFillPersonCheckFill, BsFillPersonPlusFill } from 'react-icons/bs';
-import { getUserByUsername, User } from '@/server/user';
+import { getUserByUsername, User } from '@/server/service/user';
 import { DEFAULT_OPEN_GRAPH } from '@/constants/seo';
 import Profile, { ShownProps } from '@/components/Profile';
 import InfoList from '@/components/InfoList';

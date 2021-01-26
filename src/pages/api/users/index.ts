@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { searchUsersByUsername } from '@/server/search-user';
+import { searchUsersByUsername } from '@/server/service/search-user';
 import type { SearchUserResponse } from '@/redux/api';
 
 export default async (

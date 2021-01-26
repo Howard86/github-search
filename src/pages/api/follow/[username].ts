@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { GetUserFollowCount } from '@/redux/api';
-import { getUserByUsername } from '@/server/user';
+import { getUserByUsername } from '@/server/service/user';
 
 export default async (
   req: NextApiRequest,

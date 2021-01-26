@@ -8,7 +8,7 @@ import {
   Img,
   Wrap,
 } from '@chakra-ui/react';
-import type { User } from '@/server/user';
+import type { User } from '@/server/service/user';
 import ProfileField from './ProfileField';
 import ProfileBadge from './ProfileBadge';
 
