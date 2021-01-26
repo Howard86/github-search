@@ -1,3 +1,29 @@
+# [0.4.0](https://github.com/Howard86/github-search/compare/v0.3.0...v0.4.0) (2021-01-26)
+
+
+### Bug Fixes
+
+* disable prefetch github user ([f6a7f73](https://github.com/Howard86/github-search/commit/f6a7f73f899b57b6a8f2f7f8db4cc8e97ff9a205))
+* minor styling issues ([97f3d90](https://github.com/Howard86/github-search/commit/97f3d90ef0bd77add0eb7643609d83a715aa5af9))
+* quick fix follower & following response ([01fe6b2](https://github.com/Howard86/github-search/commit/01fe6b2865931997d3a7991259af40193873bca1))
+* remove SearchBar and fix HomePage styling ([192501e](https://github.com/Howard86/github-search/commit/192501e1eb83e8c4f786386341e11b586f981471))
+* test next/image with missing env and mock next/router ([dfaf4dd](https://github.com/Howard86/github-search/commit/dfaf4dd7d74ce6d159a850e372ecdd7486a2fd0f))
+* update based on LightHouse scores ([46dc951](https://github.com/Howard86/github-search/commit/46dc951d76e82cf263da882ee5a2c0d661f0a62f))
+* update page types with NextPage ([1058f4d](https://github.com/Howard86/github-search/commit/1058f4dd6fae3b946e6eef6b8238bf5d1ac7d816))
+
+
+### Features
+
+* add dark mode and ColorModeSwitch ([ea14660](https://github.com/Howard86/github-search/commit/ea146609fa6d7f164406682718efb6d4abd4565f))
+* add InfoList ([5b63902](https://github.com/Howard86/github-search/commit/5b6390240d4f24798dc484d1a58b5b05990a6ddb))
+* add Layout in _app ([0bc75c4](https://github.com/Howard86/github-search/commit/0bc75c4fce065074434d622d88c14160964c0337))
+* add page transition in Layout ([3e9df1a](https://github.com/Howard86/github-search/commit/3e9df1a7bbdc0ba61ed5d6420b0c249e05cc2c86))
+* add Profile & ProfileField ([225b223](https://github.com/Howard86/github-search/commit/225b223a0a531fceeafd84b70a93f5f0a761d4af))
+* improve SEO and update favicon ([ea2e75c](https://github.com/Howard86/github-search/commit/ea2e75c569ea2c90667281dbb763b65dddb50bc0))
+* update user page with Profile & Tabs ([272994d](https://github.com/Howard86/github-search/commit/272994dca1bbc694b0176eb9e85ea0ee5d62a5f7))
+
+
+
 # [0.3.0](https://github.com/Howard86/github-search/compare/v0.2.0...v0.3.0) (2021-01-24)
 
 
