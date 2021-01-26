@@ -1,6 +1,7 @@
 import { BiIdCard, BiConversation } from 'react-icons/bi';
-import { GiWantedReward } from 'react-icons/gi';
-import { SiGravatar, SiCodesandbox } from 'react-icons/si';
+import { GiReceiveMoney, GiTakeMyMoney, GiWantedReward } from 'react-icons/gi';
+import { GrUserManager } from 'react-icons/gr';
+import { SiCodesandbox } from 'react-icons/si';
 import {
   RiAdminLine,
   RiGitRepositoryLine,
@@ -10,35 +11,29 @@ import {
 import {
   FaBlog,
   FaBook,
+  FaDonate,
   FaInfoCircle,
   FaTwitter,
   FaUserCircle,
 } from 'react-icons/fa';
 import { HiOutlineMail } from 'react-icons/hi';
+import { ImMan } from 'react-icons/im';
 import { BsFillPersonPlusFill, BsPersonCheckFill } from 'react-icons/bs';
-import { MdLocationOn, MdWork } from 'react-icons/md';
+import { MdKeyboard, MdLocationOn, MdSchool, MdWork } from 'react-icons/md';
 import type { IconType } from 'react-icons';
-import type { ProfileProps } from '@/components/Profile';
+import { ProfileFieldKey } from '@/components/ProfileField';
 
-const matchIcon = (key: keyof ProfileProps): IconType => {
+// TODO: add dynamic import for better performance
+const matchIcon = (key: ProfileFieldKey): IconType => {
   switch (key) {
-    case 'username':
+    case 'login':
       return FaUserCircle;
+
+    case 'databaseId':
+      return SiCodesandbox;
 
     case 'id':
       return BiIdCard;
-
-    case 'nodeId':
-      return SiCodesandbox;
-
-    case 'gravatarId':
-      return SiGravatar;
-
-    case 'type':
-      return FaInfoCircle;
-
-    case 'siteAdmin':
-      return RiAdminLine;
 
     case 'name':
       return FaUserCircle;
@@ -46,7 +41,7 @@ const matchIcon = (key: keyof ProfileProps): IconType => {
     case 'company':
       return MdWork;
 
-    case 'blog':
+    case 'websiteUrl':
       return FaBlog;
 
     case 'location':
@@ -55,25 +50,22 @@ const matchIcon = (key: keyof ProfileProps): IconType => {
     case 'email':
       return HiOutlineMail;
 
-    case 'hireable':
-      return GiWantedReward;
-
     case 'bio':
       return BiConversation;
 
     case 'twitterUsername':
       return FaTwitter;
 
-    case 'repositoryCount':
+    case 'repositories':
       return RiGitRepositoryLine;
 
-    case 'gistCount':
+    case 'gists':
       return FaBook;
 
-    case 'followerCount':
+    case 'followers':
       return BsFillPersonPlusFill;
 
-    case 'followingCount':
+    case 'following':
       return BsPersonCheckFill;
 
     case 'createdAt':
@@ -81,6 +73,33 @@ const matchIcon = (key: keyof ProfileProps): IconType => {
 
     case 'updatedAt':
       return RiTimer2Fill;
+
+    case 'hasSponsorsListing':
+      return FaDonate;
+
+    case 'isBountyHunter':
+      return GiReceiveMoney;
+
+    case 'isCampusExpert':
+      return MdSchool;
+
+    case 'isDeveloperProgramMember':
+      return MdKeyboard;
+
+    case 'isEmployee':
+      return GrUserManager;
+
+    case 'isHireable':
+      return GiWantedReward;
+
+    case 'isSiteAdmin':
+      return RiAdminLine;
+
+    case 'isSponsoringViewer':
+      return GiTakeMyMoney;
+
+    case 'isViewer':
+      return ImMan;
 
     default:
       return FaInfoCircle;

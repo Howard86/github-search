@@ -1,12 +1,17 @@
 import React, { FC, ReactText } from 'react';
 import { Icon, Text, Tooltip, Flex } from '@chakra-ui/react';
-import type { ProfileProps } from './Profile';
 import matchIcon from '@/utils/match-icon';
+import type { ProfileProps } from './Profile';
 
 interface ProfileFieldProps {
-  fieldKey: keyof ProfileProps;
+  fieldKey: ProfileFieldKey;
   fieldValue: ReactText;
 }
+
+export type ProfileFieldKey =
+  | keyof ProfileProps['shown']
+  | keyof ProfileProps['hidden']
+  | keyof ProfileProps['badges'];
 
 const ProfileField: FC<ProfileFieldProps> = ({ fieldKey, fieldValue }) => {
   if (fieldValue === null || fieldValue === '') {
