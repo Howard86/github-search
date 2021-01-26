@@ -16,7 +16,7 @@ export interface UserProfile {
   avatarUrl: string;
 }
 
-const MAX_CACHED_PAGES = 1000;
+const MAX_CACHED_PAGES = 100;
 export const TEN_MINUTES = 10 * 60 * 1000;
 
 const cachedSearchUserPage = new LRU<string, SearchUserPage>({

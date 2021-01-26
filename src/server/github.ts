@@ -1,6 +1,7 @@
 import { Octokit } from '@octokit/rest';
 import { retry } from '@octokit/plugin-retry';
 import { throttling } from '@octokit/plugin-throttling';
+import { ClientError, gql, GraphQLClient } from 'graphql-request';
 
 export interface SearchGitHubUser {
   total_count: number;
@@ -52,34 +53,62 @@ export interface DetailedGitHubUser extends GitHubUser {
   };
 }
 
-export interface GitHubFollower {
-  login: string;
-  id: number;
-  node_id: string;
-  avatar_url: string;
-  gravatar_id: string;
-  url: string;
-  html_url: string;
-  followers_url: string;
-  following_url: string;
-  gists_url: string;
-  starred_url: string;
+export interface GetUser {
+  user: {
+    avatarUrl: string;
+    bio: string;
+    company: string;
+    createdAt: string;
+    databaseId: number;
+    email: string;
+    repositories: GetInfo<'name'>;
+    followers: GetInfo<'login'>;
+    following: GetInfo<'login'>;
+    hasSponsorsListing: boolean;
+    id: string;
+    isBountyHunter: boolean;
+    isCampusExpert: boolean;
+    isDeveloperProgramMember: boolean;
+    isEmployee: boolean;
+    isHireable: boolean;
+    isSiteAdmin: boolean;
+    isSponsoringViewer: boolean;
+    isViewer: boolean;
+    location: string;
+    login: string;
+    name: string;
+    updatedAt: string;
+    twitterUsername: string;
+    websiteUrl: string;
+    gists: {
+      totalCount: number;
+    };
+  };
+  rateLimit: RateLimit;
 }
 
-export interface Repository {
-  id: number;
-  node_id: string;
-  name: string;
-  full_name: string;
-  private: boolean;
-  owner: GitHubUser;
-  html_url: string;
-  description: string;
-  fork: boolean;
-  url: string;
+type GetInfo<T extends string> = {
+  nodes: { [key in T]: string }[];
+  totalCount: number;
+  pageInfo: PageInfo;
+};
+
+interface PageInfo {
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  endCursor: string;
+  startCursor: string;
+}
+
+interface RateLimit {
+  remaining: number;
+  resetAt: string;
+  limit: number;
 }
 
 export const USER_PER_PAGE = 20;
+const MAX_RETRY_TIME = 1;
+const GITHUB_GQL_ENDPOINT = 'https://api.github.com/graphql';
 
 const EnhancedOctokit = Octokit.plugin(retry, throttling);
 
@@ -112,46 +141,115 @@ const octokit = new EnhancedOctokit({
 export const searchUsers = async (
   username: string,
   page: number,
+  pageSize = USER_PER_PAGE,
 ): Promise<SearchGitHubUser> => {
   const response = await octokit.search.users({
     q: `${username} in:login`,
-    per_page: USER_PER_PAGE,
+    per_page: pageSize,
     page,
   });
 
   return response.data;
 };
 
+const client = new GraphQLClient(GITHUB_GQL_ENDPOINT, {
+  headers: {
+    authorization: `Bearer ${process.env.GITHUB_ACCESS_TOKEN}`,
+  },
+});
+
 export const getUser = async (
   username: string,
-): Promise<DetailedGitHubUser> => {
-  const response = await octokit.users.getByUsername({
-    username,
-  });
+  count = 0,
+): Promise<GetUser | null> => {
+  if (count > MAX_RETRY_TIME) {
+    return null;
+  }
 
-  return response.data;
-};
+  const query = gql`
+    query getUser($username: String!) {
+      user(login: $username) {
+        avatarUrl(size: 200)
+        bio
+        company
+        createdAt
+        databaseId
+        email
+        repositories(
+          first: 100
+          orderBy: { field: UPDATED_AT, direction: DESC }
+        ) {
+          nodes {
+            name
+          }
+          totalCount
+          pageInfo {
+            ...pageInfoFields
+          }
+        }
+        followers(first: 100) {
+          nodes {
+            login
+          }
+          totalCount
+          pageInfo {
+            ...pageInfoFields
+          }
+        }
+        following(first: 100) {
+          nodes {
+            login
+          }
+          totalCount
+          pageInfo {
+            ...pageInfoFields
+          }
+        }
+        hasSponsorsListing
+        id
+        isBountyHunter
+        isCampusExpert
+        isDeveloperProgramMember
+        isEmployee
+        isHireable
+        isSiteAdmin
+        isSponsoringViewer
+        isViewer
+        location
+        login
+        name
+        updatedAt
+        twitterUsername
+        websiteUrl
+        gists {
+          totalCount
+        }
+      }
+      rateLimit {
+        remaining
+        resetAt
+        limit
+      }
+    }
 
-export const getRepositories = async (
-  username: string,
-): Promise<Repository[]> => {
-  const response = await octokit.repos.listForUser({ username });
+    fragment pageInfoFields on PageInfo {
+      startCursor
+      endCursor
+      hasNextPage
+      hasPreviousPage
+    }
+  `;
 
-  return response.data;
-};
+  try {
+    const data = await client.request<GetUser>(query, { username });
+    return data;
+  } catch (error) {
+    console.error(error);
 
-export const getFollowers = async (username: string): Promise<GitHubUser[]> => {
-  const response = await octokit.users.listFollowersForUser({
-    username,
-  });
-
-  return response.data;
-};
-
-export const getFollowing = async (username: string): Promise<GitHubUser[]> => {
-  const response = await octokit.users.listFollowingForUser({
-    username,
-  });
-
-  return response.data;
+    // Retry once
+    if (error instanceof ClientError && error.response.status !== 404) {
+      return getUser(username, count + 1);
+    }
+    return null;
+  }
 };
