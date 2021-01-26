@@ -1,65 +1,112 @@
-import React, { FC } from 'react';
+import React from 'react';
+import type { NextPage, GetStaticPaths, GetStaticProps } from 'next';
 import {
-  VStack,
-  Text,
-  Container,
-  HStack,
-  Button,
-  Collapse,
-  useDisclosure,
-  Heading,
-  Box,
+  Tabs,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  List,
+  Flex,
+  Spacer,
 } from '@chakra-ui/react';
-import type { GetStaticPaths, GetStaticProps } from 'next';
+import { NextSeo } from 'next-seo';
+import { RiGitRepositoryLine } from 'react-icons/ri';
+import { BsFillPersonCheckFill, BsFillPersonPlusFill } from 'react-icons/bs';
 import { getUserByUsername, User } from '@/server/user';
+import { DEFAULT_OPEN_GRAPH } from '@/constants/seo';
+import Profile from '@/components/Profile';
+import InfoList from '@/components/InfoList';
 
 type UserPageProps = User;
 
 const FIVE_MINUTES = 5 * 60;
+const GITHUB_BASE_URL = 'https://github.com';
 
-const renderName = (name: string) => <Text key={name}>{name}</Text>;
-
-const UserPage: FC<UserPageProps> = ({
+const UserPage: NextPage<UserPageProps> = ({
   info,
   repositories,
   followers,
   followings,
-}) => {
-  const { isOpen, onToggle } = useDisclosure();
-
-  // FIXME: 'plan' exists when accessing tokens' owner, should remove in server
-  const { plan, ...rest } = info;
-
-  return (
-    <Container as="main" p={[4, 8, 12]} minH="80vh" centerContent>
-      <VStack spacing={4}>
-        <Box>
-          <Heading>Repositories</Heading>
-          {repositories.map(renderName)}
-        </Box>
-        <Box>
-          <Heading>Followers</Heading>
-          {followers.map(renderName)}
-        </Box>
-        <Box>
-          <Heading>Followings</Heading>
-          {followings.map(renderName)}
-        </Box>
-        <Button onClick={onToggle}>Show API response</Button>
-        <Collapse in={isOpen} animateOpacity>
-          <VStack spacing={2}>
-            {Object.keys(rest).map((key) => (
-              <HStack key={key} alignItems="start">
-                <Text fontWeight="bold">{key}</Text>
-                <Text>{info[key]}</Text>
-              </HStack>
-            ))}
-          </VStack>
-        </Collapse>
-      </VStack>
-    </Container>
-  );
-};
+}) => (
+  <>
+    <NextSeo
+      title={info.name}
+      openGraph={{
+        ...DEFAULT_OPEN_GRAPH,
+        images: [
+          {
+            url: info.avatar_url,
+            alt: `${info.name}'s profile picture`,
+            width: 200,
+            height: 200,
+          },
+        ],
+      }}
+    />
+    <Flex direction={['column', 'row']} align={['center', 'start']}>
+      <Profile
+        avatarUrl={info.avatar_url}
+        username={info.login}
+        name={info.name}
+        bio={info.bio}
+        email={info.email}
+        location={info.location}
+        company={info.company}
+        blog={info.blog}
+        twitterUsername={info.twitter_username}
+        siteAdmin={info.site_admin}
+        hireable={info.hireable}
+        id={info.id}
+        gravatarId={info.gravatar_id}
+        nodeId={info.node_id}
+        type={info.type}
+        repositoryCount={info.public_repos}
+        gistCount={info.public_gists}
+        followerCount={info.followers}
+        followingCount={info.following}
+        createdAt={info.created_at}
+        updatedAt={info.updated_at}
+      />
+      <Spacer mx={[0, 2]} my={[4, 0]} />
+      <Tabs minW={['sm', 'sm', 'md']} w="full" variant="enclosed" isFitted>
+        <TabList>
+          <Tab>Repository</Tab>
+          <Tab>Follower</Tab>
+          <Tab>Following</Tab>
+        </TabList>
+        <TabPanels maxH="80vh" overflowY="auto">
+          <TabPanel>
+            <List spacing={2}>
+              {repositories.map((name) => (
+                <InfoList
+                  key={name}
+                  name={name}
+                  url={`${GITHUB_BASE_URL}/${info.login}/${name}`}
+                  icon={RiGitRepositoryLine}
+                />
+              ))}
+            </List>
+          </TabPanel>
+          <TabPanel>
+            <List spacing={2}>
+              {followers.map((name) => (
+                <InfoList key={name} name={name} icon={BsFillPersonPlusFill} />
+              ))}
+            </List>
+          </TabPanel>
+          <TabPanel>
+            <List spacing={2}>
+              {followings.map((name) => (
+                <InfoList key={name} name={name} icon={BsFillPersonCheckFill} />
+              ))}
+            </List>
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
+    </Flex>
+  </>
+);
 
 export const getStaticPaths: GetStaticPaths = async () => ({
   paths: [],

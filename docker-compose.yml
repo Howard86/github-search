@@ -1,0 +1,22 @@
+# Used by GCP server
+
+networks:
+  webproxy:
+    external:
+      name: webproxy
+services:
+  github-search:
+    container_name: github-search
+    build:
+      context: .
+    env_file:
+      - .env.production.local
+    expose:
+      - 3000
+    ports:
+      - 3000:3000
+    image: github-search-dev:latest
+    networks:
+      - webproxy
+    restart: always
+version: '3.0'

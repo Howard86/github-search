@@ -1,6 +1,6 @@
 {
   "name": "github-search",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Implement another github search engine",
   "repository": {
     "type": "git",
@@ -42,8 +42,10 @@
     "lodash.debounce": "^4.0.8",
     "lru-cache": "^6.0.0",
     "next": "^10.0.1",
+    "next-seo": "^4.17.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-icons": "^4.1.0",
     "react-redux": "^7.2.2"
   },
   "devDependencies": {
@@ -68,5 +70,8 @@
     "lint-staged": "^10.5.1",
     "prettier": "^2.1.2",
     "typescript": "^4.0.5"
-  }
+  },
+  "browserslist": [
+    "last 1 version, > 1%, ie 10, and_chr 30"
+  ]
 }

@@ -12,7 +12,7 @@ const bar = keyframes`
 const Loader: FC = () => {
   const baseStyle = {
     h: 4,
-    w: 'full',
+    w: 36,
     m: 0,
     borderRadius: 'md',
   };
