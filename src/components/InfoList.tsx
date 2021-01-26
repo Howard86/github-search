@@ -17,7 +17,7 @@ const InfoList: FC<InfoList> = ({ name, icon, url }) => (
         {name}
       </Link>
     ) : (
-      <NextLink href={`/user/${name}`} prefetch={false} passHref>
+      <NextLink href={`/user/${name}`} passHref>
         <Link>{name}</Link>
       </NextLink>
     )}
