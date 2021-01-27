@@ -1,16 +1,18 @@
-# Used by GCP server
+# Used by AWS EC2
 
 networks:
   webproxy:
     external:
       name: webproxy
+  app-internal:
+    name: app-internal
 services:
   github-search:
     container_name: github-search
     build:
       context: .
     env_file:
-      - .env.production.local
+      - .env.local
     expose:
       - 3000
     ports:
@@ -18,5 +20,15 @@ services:
     image: github-search-dev:latest
     networks:
       - webproxy
+      - app-internal
     restart: always
+  redis:
+    container_name: app-cache
+    image: redis:alpine
+    expose:
+      - 3000
+    ports:
+      - 6379:6379
+    networks:
+      - app-internal
 version: '3.0'

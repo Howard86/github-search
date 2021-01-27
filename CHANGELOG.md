@@ -1,3 +1,23 @@
+# [1.0.0](https://github.com/Howard86/github-search/compare/v0.4.0...v1.0.0) (2021-01-27)
+
+
+### Bug Fixes
+
+* cache ttl units ([f731561](https://github.com/Howard86/github-search/commit/f7315611897cbe0c46917c29f39e79bdcf9c1a66))
+* enable prefetch with new API endpoint ([68d0707](https://github.com/Howard86/github-search/commit/68d0707e34521da6ffdf74d8b9f73eb5c6cb5e05))
+* missing HomePage styles ([38dfcc4](https://github.com/Howard86/github-search/commit/38dfcc48642684a5c6d6b8c4033d21813b516faf))
+
+
+### Features
+
+* add AppCache and UserService ([0968bc1](https://github.com/Howard86/github-search/commit/0968bc1a31ee31d35b6eeada21de3bfab89f1cc2))
+* add generic cache class ([194af3f](https://github.com/Howard86/github-search/commit/194af3fa5d8a5a380596b9e3bda3c7ee4c6dac2e))
+* add server/model to types and query ([09cc401](https://github.com/Howard86/github-search/commit/09cc4015e7074643c40aa539933d66f4c8c632bc))
+* migrate getUserByUsername with single gql request ([39c231f](https://github.com/Howard86/github-search/commit/39c231fc03d6101721154bc0cdf64b173e3e55fb))
+* refactor Profile with new API and add ProfileBadge ([0e1d479](https://github.com/Howard86/github-search/commit/0e1d479a74da7ba28713bf50ecae6468f5cbf501))
+
+
+
 # [0.4.0](https://github.com/Howard86/github-search/compare/v0.3.0...v0.4.0) (2021-01-26)
 
 
