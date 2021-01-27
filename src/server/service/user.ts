@@ -1,120 +1,58 @@
-import LRU from 'lru-cache';
-import { TEN_MINUTES } from './search-user';
-import { getUser, GetUser } from './github';
+import AppCache from '../persistence/cache';
+import type { SearchGitHubUser, GetUser } from '../model/github';
+import type { SearchUserPage, User } from '../model/user';
+import GithubService from './github';
 
-export interface User {
-  // initial display
-  major: {
-    avatarUrl: string;
-    name: string;
-    login: string;
-    bio: string;
-    email: string;
-    location: string;
-    company: string;
-    websiteUrl: string;
-    twitterUsername: string;
-    repositories: UserInfo;
-    followers: UserInfo;
-    following: UserInfo;
-    gists: number;
-  };
-  // hidden
-  minor: {
-    id: string;
-    databaseId: number;
-    createdAt: string;
-    updatedAt: string;
-  };
-  // badges
-  badges: {
-    hasSponsorsListing: boolean;
-    isBountyHunter: boolean;
-    isCampusExpert: boolean;
-    isDeveloperProgramMember: boolean;
-    isEmployee: boolean;
-    isHireable: boolean;
-    isSiteAdmin: boolean;
-    isSponsoringViewer: boolean;
-    isViewer: boolean;
-  };
-}
+export default class UserService {
+  constructor(
+    private readonly githubService: GithubService,
+    private readonly cache: AppCache,
+  ) {}
 
-interface UserInfo {
-  total: number;
-  data: string[];
-}
-
-const MAX_CACHED_USERS = 1000;
-
-const cachedUser = new LRU<string, User>({
-  max: MAX_CACHED_USERS,
-  maxAge: TEN_MINUTES,
-});
-
-export const clearUserCache = (): number => {
-  const count = cachedUser.keys().length;
-  cachedUser.reset();
-  return count;
-};
-
-export const getUserByUsername = async (
-  username: string,
-): Promise<User | null> => {
-  const cache = cachedUser.get(username);
-
-  if (cache) {
-    return cache;
+  public async searchUsersByUsername(
+    username: string,
+    page: number,
+  ): Promise<SearchUserPage> {
+    return this.cache
+      .getSearchUserPageCache()
+      .getOrInsert(this.constructKey(username, page), async () => {
+        const result = await this.githubService.searchUsers(username, page);
+        return this.convertUserPage(result, page);
+      });
   }
 
-  const response = await getUser(username);
-
-  if (!response) {
-    cachedUser.set(username, null);
-    return null;
+  public async getUserByUsername(username: string): Promise<User | null> {
+    return this.cache.getUserCache().getOrInsert(username, async () => {
+      const result = await this.githubService.getUser(username);
+      return this.convertUser(result);
+    });
   }
 
-  const user = getUserDto(response);
+  private constructKey(...args: (string | number)[]): string {
+    return args.join('::');
+  }
 
-  cachedUser.set(username, user);
+  private convertUserPage(raw: SearchGitHubUser, page: number): SearchUserPage {
+    const total = raw.total_count;
+    return {
+      total,
+      isStart: page === 1,
+      page,
+      totalPage: Math.floor(total / this.githubService.USER_PER_PAGE) + 1,
+      isEnd: page * this.githubService.USER_PER_PAGE >= total,
+      users: raw.items.map((item) => ({
+        avatarUrl: item.avatar_url,
+        username: item.login,
+      })),
+    };
+  }
 
-  return user;
-};
+  private convertUser(raw: GetUser): User {
+    if (!raw) {
+      return null;
+    }
 
-function getUserDto(response: GetUser): User {
-  const {
-    avatarUrl,
-    name,
-    login,
-    bio,
-    email,
-    location,
-    company,
-    websiteUrl,
-    twitterUsername,
-    repositories,
-    followers,
-    following,
-    gists,
-    // hidden
-    id,
-    databaseId,
-    createdAt,
-    updatedAt,
-    // badges
-    hasSponsorsListing,
-    isBountyHunter,
-    isCampusExpert,
-    isDeveloperProgramMember,
-    isEmployee,
-    isHireable,
-    isSiteAdmin,
-    isSponsoringViewer,
-    isViewer,
-  } = response.user;
-
-  return {
-    major: {
+    const {
       avatarUrl,
       name,
       login,
@@ -124,27 +62,16 @@ function getUserDto(response: GetUser): User {
       company,
       websiteUrl,
       twitterUsername,
-      repositories: {
-        total: repositories.totalCount,
-        data: repositories.nodes.map(mapRepository),
-      },
-      followers: {
-        total: followers.totalCount,
-        data: followers.nodes.map(mapFollow),
-      },
-      following: {
-        total: following.totalCount,
-        data: following.nodes.map(mapFollow),
-      },
-      gists: gists.totalCount,
-    },
-    minor: {
+      repositories,
+      followers,
+      following,
+      gists,
+      // hidden
       id,
       databaseId,
       createdAt,
       updatedAt,
-    },
-    badges: {
+      // badges
       hasSponsorsListing,
       isBountyHunter,
       isCampusExpert,
@@ -154,14 +81,58 @@ function getUserDto(response: GetUser): User {
       isSiteAdmin,
       isSponsoringViewer,
       isViewer,
-    },
-  };
-}
+    } = raw.user;
 
-function mapFollow(user: { login: string }): string {
-  return user.login;
-}
+    return {
+      major: {
+        avatarUrl,
+        name,
+        login,
+        bio,
+        email,
+        location,
+        company,
+        websiteUrl,
+        twitterUsername,
+        repositories: {
+          total: repositories.totalCount,
+          data: repositories.nodes.map(this.mapRepository),
+        },
+        followers: {
+          total: followers.totalCount,
+          data: followers.nodes.map(this.mapFollow),
+        },
+        following: {
+          total: following.totalCount,
+          data: following.nodes.map(this.mapFollow),
+        },
+        gists: gists.totalCount,
+      },
+      minor: {
+        id,
+        databaseId,
+        createdAt,
+        updatedAt,
+      },
+      badges: {
+        hasSponsorsListing,
+        isBountyHunter,
+        isCampusExpert,
+        isDeveloperProgramMember,
+        isEmployee,
+        isHireable,
+        isSiteAdmin,
+        isSponsoringViewer,
+        isViewer,
+      },
+    };
+  }
 
-function mapRepository(repository: { name: string }): string {
-  return repository.name;
+  private mapFollow(user: { login: string }): string {
+    return user.login;
+  }
+
+  private mapRepository(repository: { name: string }): string {
+    return repository.name;
+  }
 }
