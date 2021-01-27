@@ -18,6 +18,7 @@ import { RiGitRepositoryLine } from 'react-icons/ri';
 import { BsFillPersonCheckFill, BsFillPersonPlusFill } from 'react-icons/bs';
 
 import type { User } from '@/server/model/user';
+import userService from '@/server/service';
 import { DEFAULT_OPEN_GRAPH } from '@/constants/seo';
 import Profile, { ShownProps } from '@/components/Profile';
 import InfoList from '@/components/InfoList';
@@ -132,7 +133,7 @@ export const getStaticPaths: GetStaticPaths = async () => ({
 export const getStaticProps: GetStaticProps = async (context) => {
   const username = context.params.username as string;
 
-  const user = await getUserByUsername(username);
+  const user = await userService.getUserByUsername(username);
   if (!user) {
     return { notFound: true };
   }

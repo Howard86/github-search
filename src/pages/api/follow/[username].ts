@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { GetUserFollowCount } from '@/redux/api';
-import { getUserByUsername } from '@/server/service/user';
+import userService from '@/server/service';
 
 export default async (
   req: NextApiRequest,
@@ -10,7 +10,7 @@ export default async (
 
   switch (req.method) {
     case 'GET': {
-      const user = await getUserByUsername(username);
+      const user = await userService.getUserByUsername(username);
 
       if (!user) {
         return res.status(404).json({ success: false });
