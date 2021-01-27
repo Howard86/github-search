@@ -35,14 +35,16 @@ export default class AppCache {
       (_) => `${prefix}::${_}`,
       JSON.stringify,
       JSON.parse,
+      // seconds
       ttl,
     );
   }
 
   private initializeMemory<V>(
     max: number,
-    maxAge: number,
+    ttl: number,
   ): MemoryCache<string, V> {
-    return new MemoryCache({ maxAge, max });
+    // mini-seconds
+    return new MemoryCache({ maxAge: ttl * 1000, max });
   }
 }
