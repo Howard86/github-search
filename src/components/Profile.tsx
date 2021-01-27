@@ -8,7 +8,7 @@ import {
   Img,
   Wrap,
 } from '@chakra-ui/react';
-import type { User } from '@/server/service/user';
+import type { User } from '@/server/model/user';
 import ProfileField from './ProfileField';
 import ProfileBadge from './ProfileBadge';
 
@@ -68,13 +68,6 @@ const Profile: FC<ProfileProps> = ({ shown, hidden, badges }) => {
             <ProfileField key={key} fieldKey={key} fieldValue={hidden[key]} />
           ))}
         </Collapse>
-        {/* {Object.keys(badges).map((key: keyof ProfileProps['badges']) => (
-          <ProfileField
-            key={key}
-            fieldKey={key}
-            fieldValue={convertBoolean(badges[key])}
-          />
-        ))} */}
       </Box>
 
       <Button onClick={handleToggle}>Show {show ? ' less' : ' more'}</Button>

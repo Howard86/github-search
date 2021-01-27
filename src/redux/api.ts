@@ -1,5 +1,4 @@
-import type { SearchUserPage } from '@/server/service/search-user';
-import type { User } from '@/server/service/user';
+import type { User, SearchUserPage } from '@/server/model/user';
 
 export interface SearchUserResponse
   extends LocalAPIResponse,
