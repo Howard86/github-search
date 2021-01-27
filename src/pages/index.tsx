@@ -76,7 +76,7 @@ const Home: NextPage = () => {
   }, [username]);
 
   return (
-    <VStack my="auto" spacing={[2, 4]}>
+    <VStack my="auto" spacing={[2, 4]} w="full">
       <Image
         src="/profile.jpg"
         alt="home page image"
@@ -103,7 +103,7 @@ const Home: NextPage = () => {
         </Button>
       </Stack>
       {message && <Text color="tomato">{message}</Text>}
-      <Wrap justify="center">
+      <Wrap justify="center" w="full">
         {users.map((user) => (
           <UserCard
             key={user.username}
