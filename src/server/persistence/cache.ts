@@ -8,7 +8,9 @@ export default class AppCache {
 
   constructor(enableRedis: boolean, ttl: number) {
     if (enableRedis) {
-      const client = createClient();
+      const client = createClient({
+        host: process.env.REDIS_HOST,
+      });
       this.searchUserPageCache = this.initializeRedis(client, 'search', ttl);
       this.userCache = this.initializeRedis(client, 'get', ttl);
     } else {
