@@ -17,6 +17,7 @@ const variants: Variants = {
 
 const Layout: FC = ({ children }) => {
   const router = useRouter();
+  const key = router.asPath.includes('?') ? router.pathname : router.asPath;
 
   return (
     <Container
@@ -27,7 +28,7 @@ const Layout: FC = ({ children }) => {
       initial="pageInitial"
       animate="pageAnimate"
       variants={variants}
-      key={router.asPath}
+      key={key}
       centerContent
     >
       <Flex mb={[2, 4]} w="full" justify="space-between">
