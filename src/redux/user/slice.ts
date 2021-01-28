@@ -5,11 +5,15 @@ import { search } from './action';
 export interface UserState {
   isSearching: boolean;
   users: UserProfile[];
+  isEnd: boolean;
+  totalPage: number;
   message?: string;
 }
 
 const initialState: UserState = {
   isSearching: false,
+  isEnd: true,
+  totalPage: 0,
   users: [],
 };
 
@@ -25,10 +29,14 @@ const { reducer } = createSlice({
     builder.addCase(search.fulfilled, (state, action) => {
       state.isSearching = false;
       state.users = action.payload.users;
+      state.isEnd = action.payload.isEnd;
+      state.totalPage = action.payload.totalPage;
     });
-    builder.addCase(search.rejected, (state, action) => {
-      state.isSearching = false;
-      state.message = `Cannot find ${action.meta.arg.username}, try another one?`;
+    builder.addCase(search.rejected, (_, action) => {
+      return {
+        ...initialState,
+        message: `Cannot find ${action.meta.arg.username}, try another one?`,
+      };
     });
   },
 });

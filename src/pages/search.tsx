@@ -1,8 +1,10 @@
-import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
-import { NextPage, GetServerSideProps } from 'next';
+import React, { ChangeEvent, useCallback, useEffect, useReducer } from 'react';
+import type { NextPage, GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import { SearchIcon } from '@chakra-ui/icons';
+import { useSelector } from 'react-redux';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import debounce from 'lodash.debounce';
+import { SearchIcon } from '@chakra-ui/icons';
 import {
   VStack,
   Heading,
@@ -15,73 +17,118 @@ import {
   HStack,
   Text,
 } from '@chakra-ui/react';
+
 import Loader from '@/components/Loader';
 import UserCard from '@/components/UserCard';
-import { SearchUserResponse } from '@/redux/api';
-import { search, selectUser } from '@/redux/user';
 import { useAppDispatch } from '@/redux/store';
-import { useSelector } from 'react-redux';
+import { search, selectUser } from '@/redux/user';
 
 interface SearchPageProps {
   initialName: string;
 }
 
+interface SearchPageLocalState {
+  page: number;
+  username: string;
+  showPagination: boolean;
+  isLoading: boolean;
+}
+
 const DEFAULT_PAGE = 1;
 const DEBOUNCE_MINI_SECONDS = 500;
+
+const initialState: SearchPageLocalState = {
+  page: DEFAULT_PAGE,
+  username: '',
+  showPagination: false,
+  isLoading: true,
+};
+
+const { actions, reducer } = createSlice({
+  name: 'local',
+  initialState,
+  reducers: {
+    resetPage(state) {
+      state.page = 1;
+    },
+    increment(state) {
+      state.page += 1;
+    },
+    decrement(state) {
+      state.page -= 1;
+    },
+    updateUsername(state, action: PayloadAction<string>) {
+      state.username = action.payload;
+    },
+    setPending(state) {
+      state.isLoading = true;
+      state.showPagination = false;
+    },
+    setFinished(state, action: PayloadAction<number>) {
+      state.isLoading = false;
+      state.showPagination = action.payload > DEFAULT_PAGE;
+    },
+  },
+});
 
 const SearchPage: NextPage<SearchPageProps> = ({ initialName }) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const { users, message } = useSelector(selectUser);
+  const { isSearching, totalPage, isEnd, users, message } = useSelector(
+    selectUser,
+  );
 
-  const [username, setUsername] = useState(initialName);
-  const [page, setPage] = useState(DEFAULT_PAGE);
-  const [isLoading, setLoading] = useState(true);
-  const [isEnd, setIsEnd] = useState(true);
-  const [showPagination, setShowPagination] = useState(false);
+  const [state, localDispatch] = useReducer(reducer, {
+    ...initialState,
+    username: initialName,
+  });
+  const { username, page, isLoading, showPagination } = state;
 
-  const handleOnChange = (event: ChangeEvent<HTMLInputElement>): void => {
-    setUsername(event.target.value);
-    router.push(`/search?q=${event.target.value}`, undefined, {
-      shallow: true,
-    });
-  };
-
-  const handleOnClick = useCallback(
-    async (name: string, pageNumber: number): Promise<void> => {
-      setLoading(true);
-      setIsEnd(true);
-      setPage(pageNumber);
-      const action = await dispatch(
-        search({ username: name, page: pageNumber }),
-      );
-      setLoading(false);
-
-      const response = action.payload as SearchUserResponse;
-      if (response) {
-        setIsEnd(response.isEnd);
-        setShowPagination(response.totalPage > DEFAULT_PAGE);
-      }
+  const handleOnType = useCallback(
+    (event: ChangeEvent<HTMLInputElement>): void => {
+      localDispatch(actions.updateUsername(event.target.value));
+      router.push(`/search?q=${event.target.value}`, undefined, {
+        shallow: true,
+      });
     },
     [],
   );
 
-  const debounceSearch = useCallback(
-    debounce((name) => {
-      handleOnClick(name, DEFAULT_PAGE);
+  // only for useEffect call
+  const debounceWrappedSearch = useCallback(
+    debounce((wrappedUserName: string, wrappedPage: number) => {
+      localDispatch(actions.resetPage());
+      dispatch(search({ username: wrappedUserName, page: wrappedPage }));
     }, DEBOUNCE_MINI_SECONDS),
     [],
   );
 
-  const handleOnSearchClick = () => debounceSearch(username);
+  const handleOnSearchClick = () => {
+    localDispatch(actions.resetPage());
+    dispatch(search({ username, page }));
+  };
 
-  const handleIncrement = () => handleOnClick(username, page + 1);
+  const handleIncrement = () => {
+    localDispatch(actions.increment());
+    dispatch(search({ username, page: page + 1 }));
+  };
 
-  const handleDecrement = () => handleOnClick(username, page - 1);
+  const handleDecrement = () => {
+    localDispatch(actions.decrement());
+    dispatch(search({ username, page: page - 1 }));
+  };
+
+  useEffect(() => {
+    if (isSearching) {
+      localDispatch(actions.setPending());
+    } else {
+      localDispatch(actions.setFinished(totalPage));
+    }
+  }, [isSearching]);
 
   useEffect(() => {
     if (username !== '') {
-      debounceSearch(username);
+      debounceWrappedSearch(username, page);
     }
   }, [username]);
 
@@ -99,7 +146,7 @@ const SearchPage: NextPage<SearchPageProps> = ({ initialName }) => {
             name="search"
             aria-label="GitHub Search"
             value={username}
-            onChange={handleOnChange}
+            onChange={handleOnType}
           />
         </InputGroup>
         <Button onClick={handleOnSearchClick} isLoading={isLoading}>
