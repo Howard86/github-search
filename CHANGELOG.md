@@ -1,3 +1,19 @@
+# [1.1.0](https://github.com/Howard86/github-search/compare/v1.0.0...v1.1.0) (2021-01-29)
+
+
+### Bug Fixes
+
+* cleanup search page with useReducer and updated global store ([7422947](https://github.com/Howard86/github-search/commit/7422947b07de4882acf1a9f418d07d13eefecfa1))
+* remove animation when adding url queries ([7d456d1](https://github.com/Howard86/github-search/commit/7d456d1ae3c1f90ac97f085e587688d8be48c8d1))
+* unnecessary retry on github getUser ([147bc92](https://github.com/Howard86/github-search/commit/147bc92da0682cde5c0931087516794a0053a089))
+
+
+### Features
+
+* add SearchPage, refactoring from HomePage ([4636831](https://github.com/Howard86/github-search/commit/463683172cdd52c5d5c9c23de3851643164c3ca3))
+
+
+
 # [1.0.0](https://github.com/Howard86/github-search/compare/v0.4.0...v1.0.0) (2021-01-27)
 
 
