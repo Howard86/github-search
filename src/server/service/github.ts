@@ -43,9 +43,10 @@ export default class GithubService {
       return data;
     } catch (error) {
       console.error(error);
-
+      const isUnexpectedError =
+        error.response.status >= 400 && error.response.status !== 404;
       // Retry once
-      if (error instanceof ClientError && error.response.status !== 404) {
+      if (error instanceof ClientError && isUnexpectedError) {
         return this.getUser(username, count + 1);
       }
     }
