@@ -25,6 +25,7 @@ import { search, selectUser } from '@/redux/user';
 
 interface SearchPageProps {
   initialName: string;
+  initialPage: number;
 }
 
 interface SearchPageLocalState {
@@ -71,7 +72,10 @@ const { actions, reducer } = createSlice({
   },
 });
 
-const SearchPage: NextPage<SearchPageProps> = ({ initialName }) => {
+const SearchPage: NextPage<SearchPageProps> = ({
+  initialName,
+  initialPage,
+}) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { isSearching, totalPage, isEnd, users, message } = useSelector(
@@ -81,24 +85,22 @@ const SearchPage: NextPage<SearchPageProps> = ({ initialName }) => {
   const [state, localDispatch] = useReducer(reducer, {
     ...initialState,
     username: initialName,
+    page: initialPage,
   });
   const { username, page, isLoading, showPagination } = state;
 
-  const handleOnType = useCallback(
-    (event: ChangeEvent<HTMLInputElement>): void => {
-      localDispatch(actions.updateUsername(event.target.value));
-      router.push(`/search?q=${event.target.value}`, undefined, {
-        shallow: true,
-      });
-    },
-    [],
-  );
+  const handleOnType = (event: ChangeEvent<HTMLInputElement>): void => {
+    localDispatch(actions.updateUsername(event.target.value));
+  };
 
   // only for useEffect call
   const debounceWrappedSearch = useCallback(
     debounce((wrappedUserName: string, wrappedPage: number) => {
       localDispatch(actions.resetPage());
       dispatch(search({ username: wrappedUserName, page: wrappedPage }));
+      router.push(`/search?q=${wrappedUserName}&p=${wrappedPage}`, undefined, {
+        shallow: true,
+      });
     }, DEBOUNCE_MINI_SECONDS),
     [],
   );
@@ -111,11 +113,17 @@ const SearchPage: NextPage<SearchPageProps> = ({ initialName }) => {
   const handleIncrement = () => {
     localDispatch(actions.increment());
     dispatch(search({ username, page: page + 1 }));
+    router.push(`/search?q=${username}&p=${page + 1}`, undefined, {
+      shallow: true,
+    });
   };
 
   const handleDecrement = () => {
     localDispatch(actions.decrement());
     dispatch(search({ username, page: page - 1 }));
+    router.push(`/search?q=${username}&p=${page - 1}`, undefined, {
+      shallow: true,
+    });
   };
 
   useEffect(() => {
@@ -181,6 +189,7 @@ const SearchPage: NextPage<SearchPageProps> = ({ initialName }) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const initialName = context.query.q as string;
+  const initialPage = parseInt(context.query.p as string) || 1;
 
   if (!initialName) {
     return {
@@ -194,6 +203,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       initialName,
+      initialPage,
     },
   };
 };

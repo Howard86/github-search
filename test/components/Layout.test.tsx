@@ -6,6 +6,16 @@ jest.mock('next/router', () => ({
   useRouter() {
     return {
       asPath: '',
+      events: {
+        on: (event) => {
+          // eslint-disable-next-line no-console
+          console.log(`starts listening on ${event}`);
+        },
+        off: (event) => {
+          // eslint-disable-next-line no-console
+          console.log(`stops listening on ${event}`);
+        },
+      },
     };
   },
 }));
